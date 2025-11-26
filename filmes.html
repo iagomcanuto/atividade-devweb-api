@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indicador de Filme</title>
+    <link rel="stylesheet" href="style.css"> 
+
+</head>
+<body>
+
+    <div class="card">
+        <h1>🍃Indicar filme bom🍃</h1>
+        <p>Sem ideia do que assistir?</p>
+        
+        <button onclick="sortearFilme()">Indicar Filme</button>
+
+        <div id="resultado">
+            <img id="banner" src="" alt="Banner do Filme">
+            <h2 id="titulo">Titulo</h2>
+            <h3 id="titulo-original">Original Title</h3>
+            
+            <div class="info">
+                <span>📅 <span id="ano">0000</span></span>
+                <span>⏳ <span id="tempo">00</span> min</span>
+                <span>⭐ <span id="nota">00</span></span>
+            </div>
+            
+            <p id="descricao">Descrição...</p>
+        </div>
+    </div>
+
+    <script>
+        async function sortearFilme() {
+            const btn = document.querySelector('button');
+            const divRes = document.getElementById('resultado');
+
+            btn.innerText = "Consultando os espíritos...";
+            
+            try {
+                const resposta = await fetch("https://ghibliapi.vercel.app/films");
+                
+                if (!resposta.ok) throw new Error("Erro na conexão");
+
+                const filmes = await resposta.json();
+
+                const aleatorio = Math.floor(Math.random() * filmes.length);
+                const filme = filmes[aleatorio];
+
+                document.getElementById('titulo').innerText = filme.title;
+                document.getElementById('titulo-original').innerText = filme.original_title;
+                document.getElementById('banner').src = filme.image;
+                document.getElementById('ano').innerText = filme.release_date;
+                document.getElementById('tempo').innerText = filme.running_time;
+                document.getElementById('nota').innerText = filme.rt_score; 
+                
+                let desc = filme.description;
+                document.getElementById('descricao').innerText = desc;
+
+                divRes.style.display = "block";
+
+            } catch (erro) {
+                alert("Algo deu errado na busca.");
+                console.error(erro);
+            } finally {
+                btn.innerText = "Indicar Outro";
+            }
+        }
+    </script>
+
+</body>
+</html>
